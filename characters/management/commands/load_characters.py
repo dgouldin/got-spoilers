@@ -9,9 +9,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         filename, = args
-        with open(filename, 'r') as f:
-            reader = csv.reader(f)
-            for name, in reader:
-                Character.objects.get_or_create(name=name)
-                sys.stdout.write('.')
+        if filename == '-':
+            f = sys.stdin
+        else:
+            f = open(filename, 'r')
+        reader = csv.reader(f)
+        for name, in reader:
+            Character.objects.get_or_create(name=name)
+            sys.stdout.write('.')
         sys.stdout.write('\r\n')
+        f.close()

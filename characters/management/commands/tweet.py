@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime
 from uuid import uuid4
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from characters.models import Character
 
@@ -19,11 +20,9 @@ class Command(BaseCommand):
             print "{}: {}".format(tweet_id, tweet_text)
 
     def tweet(self, tweet_text):
-        return uuid4()
-
-        auth = (settings.FOAUTH_USERNAME, FOAUTH_PASSWORD)
-        url = 'https://foauth.org/api.twitter.com/1.1/statuses/'
-        response = requests.post(url, data={'text': tweet_text}, auth=auth)
-        if response.status != 200:
+        auth = (settings.FOAUTH_USERNAME, settings.FOAUTH_PASSWORD)
+        url = 'https://foauth.org/api.twitter.com/1.1/statuses/update.json'
+        response = requests.post(url, data={'status': tweet_text}, auth=auth)
+        if response.status_code != 200:
             raise Exception("Tweet failed: {}".format(response.content))
         return response.json()['id_str']
